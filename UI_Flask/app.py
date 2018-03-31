@@ -116,8 +116,10 @@ def weather():
     status_img= 'clear_sky.jpg'
     if status == 'clear sky':
         status_img = 'clear_sky.jpg'
-    if status == 'broken clouds':
+    elif status == 'broken clouds':
         status_img = 'broken_clouds.jpg'
+    elif status == 'overcast clouds':
+        status_img = 'overcast_clouds.jpg'
     return render_template('weather.html', temp=temp, status=capitalize(status), status_img=status_img)
 
 
