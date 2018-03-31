@@ -12,10 +12,10 @@ from boilerpipe import boiler
 
 
 class Crawler(Thread):
-    init_url = 'https://katlog.ru/'
+    init_url = 'https://mail.ru/'
     anchor = "*"
-    anchor_end = ".katlog.ru"
-    restricted_hosts = ["m.katlog.ru"]
+    anchor_end = ".mail.ru"
+    restricted_hosts = ["m.mail.ru"]
 
     save_freq = 100
 
@@ -172,5 +172,5 @@ class CrawlerRunner(Thread):
         self.start()
 
     def run(self):
-        print('SPYder starting...')
+        print('Запуск паука...')
         self.crawler()

@@ -18,7 +18,7 @@ def query_search(req):
 
 
 def generate_index(ind):
-    print('Генерация индекса...')
+    print('Index Gen...')
     files = [(int(i), {'url': url, 'text': op('root/' + str(i) + '.txt')}) for i, url in zip(ind, ind.values())]
     indexing.run('simple9', files)
     build_index.run()
@@ -44,9 +44,20 @@ def search():
             pass
     return res
 
-
-
+def SpiderRun():
+    from spider.spider import CrawlerRunner
+    c = CrawlerRunner()
+    try:
+        with open('last_ind.tmp') as f:
+            last_ind = f.read()
+        if last_ind != max(c.crawler.index, key=lambda x: int(x)):
+            generate_index(c.crawler.index)
+    except FileNotFoundError:
+        generate_index(c.crawler.index)
+        with open('last_ind.tmp', 'w') as f:
+            f.write('0')
 if __name__ == '__main__':
+    #SpiderRun()
     path = './temp_idx/'
     with open(path + 'encoding.ini', 'r') as f_config:
         encoding = f_config.readline()
@@ -55,4 +66,4 @@ if __name__ == '__main__':
         url_list = urls_filename.readlines()
         url_list = [url[:-1] for url in url_list]
     query_stack = QueryProcessor(index)
-    app.run()
+    #app.run(port=8121)

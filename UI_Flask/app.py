@@ -4,7 +4,7 @@ import uuid, requests
 admin = ('admin', '12345678')
 idw = str(uuid.uuid4())
 app = Flask(__name__, template_folder='templates')
-back_url = '127.0.0.1:8121'
+back_url = 'http://127.0.0.1:8121'
 
 def WriteData(pth, request):
     f = open('click_stat.dat', 'a')
@@ -92,7 +92,10 @@ def statics(pth):
 
 @app.route('/flask_api/search')
 def get_search():
-    ans = requests.get(back_url+"/search?s={0}".format(request.args.get('s')))
+    try:
+      ans = requests.get(back_url+"/search?s={0}".format(request.args.get('s')))
+    except requests.exceptions.ConnectionError:
+      raise ConnectionError
     res = eval(ans)
     return render_template(
         'search_jinja.html',
