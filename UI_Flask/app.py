@@ -95,7 +95,7 @@ def get_search():
     try:
       ans = requests.get(back_url+"/search?s={0}".format(request.args.get('s')))
     except requests.exceptions.ConnectionError:
-      raise ConnectionError
+      ans='[["Conn error", "", "Sorry! We have connection error!"]]'
     res = eval(ans)
     return render_template(
         'search_jinja.html',
@@ -128,4 +128,4 @@ def weather():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="81.177.139.148")

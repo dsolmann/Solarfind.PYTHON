@@ -44,7 +44,7 @@ def search():
             pass
     return res
 
-def SpiderRun():
+if __name__ == '__main__':
     from spider.spider import CrawlerRunner
     c = CrawlerRunner()
     try:
@@ -56,9 +56,7 @@ def SpiderRun():
         generate_index(c.crawler.index)
         with open('last_ind.tmp', 'w') as f:
             f.write('0')
-if __name__ == '__main__':
-    #SpiderRun()
-    path = './temp_idx/'
+    path = '/Alpha_1/core_server/temp_idx/'
     with open(path + 'encoding.ini', 'r') as f_config:
         encoding = f_config.readline()
     index = SearchIndex(path + 'entire_index', path + 'terms_dict', encoding)

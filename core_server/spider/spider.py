@@ -19,14 +19,14 @@ class Crawler(Thread):
 
     save_freq = 100
 
-    output_dir = 'html'
+    output_dir = '/Alpha_1/html/'
     debug = True
 
     delay = 0.05
     max_depth = 32
     timeout = 2.0
     max_attempts = 10
-    max_pages = 3000
+    max_pages = 0
 
     repeat_start_time = 60
     repeat_max_time = 60*60

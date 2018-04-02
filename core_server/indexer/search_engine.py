@@ -34,7 +34,7 @@ class TermDictionary:
         offset, n_bytes = target_bucket[term_idx, 1], target_bucket[term_idx, 2]
         return offset, n_bytes
 
-    # def find(self, item):
+    # def find(self, item):§
     #     bucket_idx = hash(item) % self.buckets_count
     #     offset = sum([self.buckets_size[i] * (8 + 4 + 4) for i in range(bucket_idx)]) + 4 + 4 * self.buckets_count
     #     self.file.seek(offset)
@@ -79,7 +79,7 @@ class SearchIndex:
 
 
 def run():
-    path = './temp_idx/'
+    path = '/Alpha_1/core_server/temp_idx/'
     with open(path + 'encoding.ini', 'r') as f_config:
         encoding = f_config.readline()
     index = SearchIndex(path + 'entire_index', path + 'terms_dict', encoding)
