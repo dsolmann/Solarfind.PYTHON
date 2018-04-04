@@ -141,3 +141,7 @@ def test():
     if len(numbers_decoded) > 1:
         s1 = encode_sequence(nums, encoding=method)
         print("foo:", decode_sequence(s1, encoding=method))
+
+
+if __name__ == '__main__':
+    test()

@@ -61,7 +61,7 @@ def get_snippet(doc_id, term, edge=100):
 
 
 def get_doctext(doc_id):
-    with open(os.path.join('root/', '{0}.txt'.format(doc_id)), 'r', encoding='cp1251') as textfile:
+    with open(os.path.join('root/', '{0}.txt'.format(doc_id)), 'r', encoding='utf-8') as textfile:
         text = textfile.read()
         return text
 

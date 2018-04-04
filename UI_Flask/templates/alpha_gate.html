@@ -1,69 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Alpha Gate</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+{% extends "base.html" %}
+{% block title %}Alpha Gate{% endblock %}
+{% block head %}
+    {{ super() }}
     <style>
-           @font-face {
-    font-family: Frutiger; /* Гарнитура шрифта */
-    src: url(/static/frutiger.otf); /* Путь к файлу со шрифтом */
-    }
-        body{
-            background: url("/static/metal.jpg");
+        @font-face {
+            font-family: Frutiger;
+            src: url("{{ url_for('.static', filename='frutiger.otf') }}");
         }
-        .display-0{
+
+        body {
+            background: url("{{ url_for('.static', filename='img/metal.jpg') }}");
+        }
+
+        .display-0 {
             font-family: Frutiger;
             font-size: 180pt;
             color: white;
         }
-           .display-01{
+
+        .display-01 {
             font-family: Frutiger;
             font-size: 140pt;
-               color: white;
+            color: white;
         }
     </style>
-</head>
-<body>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  	<a class="navbar-brand" href="/">Alpha Gate</a>
-  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1" aria-controls="navbar1" aria-expanded="false" aria-label="Toggle navigation">
-    	<span class="navbar-toggler-icon"></span>
-  	</button>
+{% endblock %}
 
-  	<div class="collapse navbar-collapse navbar-light" id="navbar1">
-    	<ul class="navbar-nav mr-auto">
-      		<li class="nav-item">
-        		<a class="nav-link" href="/gsearch">Gamma Search</a>
-      		</li>
-		    <li class="nav-item">
-		    	<a class="nav-link" href="/weather">Beta Weather</a>
-		    </li>
-      		<li class="nav-item dropdown">
-        		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All services</a>
-        		<div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-          			<a class="dropdown-item" href="/news.html">Project News</a>
-          			<a class="dropdown-item" href="/about">About</a>
-          			<div class="dropdown-divider"></div>
-          			<a class="dropdown-item" href="https://github.com/AlphaSearch/Alpha_A">Github page</a>
-        		</div>
-      		</li>
-    	</ul>
-    	<form class="form-inline my-2 my-lg-0" action="/flask_api/search">
-      		<input name="s" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      		<button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-    	</form>
-  	</div>
-</nav>
+{% block content %}
     <h1 align="right" class="display-0">Alpha</h1>
     <h2 align="right" class="display-01">Gate</h2><br>
     <br><br><br>
-
-    </form>
-</div>
-</body>
-</html>
+{% endblock %}

@@ -1,67 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Gamma Search</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    </head>
-<body>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script>
-        $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-        })
-        $(function () {
-          $('[data-toggle="popover"]').popover()
-        })
-    </script>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  	<a class="navbar-brand" href="/">Alpha Gate</a>
-  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1" aria-controls="navbar1" aria-expanded="false" aria-label="Toggle navigation">
-    	<span class="navbar-toggler-icon"></span>
-  	</button>
-
-  	<div class="collapse navbar-collapse navbar-light" id="navbar1">
-    	<ul class="navbar-nav mr-auto">
-      		<li class="nav-item active">
-        		<a class="nav-link" href="/gsearch">Gamma Search<span class="sr-only">(current)</span></a>
-      		</li>
-		    <li class="nav-item">
-		    	<a class="nav-link" href="/weather">Beta Weather</a>
-		    </li>
-      		<li class="nav-item dropdown">
-        		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All services</a>
-        		<div class="dropdown-menu" aria-labelledby="navbarDropdown1">
-          			<a class="dropdown-item" href="/news">Project News</a>
-          			<a class="dropdown-item" href="/about">About</a>
-          			<div class="dropdown-divider"></div>
-          			<a class="dropdown-item" href="https://github.com/AlphaSearch/Alpha_A">Github page</a>
-        		</div>
-      		</li>
-    	</ul>
-    	<form class="form-inline my-2 my-lg-0" action="/flask_api/search">
-      		<input name="s" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      		<button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
-    	</form>
-        <li class= "nav-item">
-            <a tabindex="0" href="admin_panel/login.html" class="btn btn-lg btn-outline-light" role="button"><img src="/static/sett_icon.png" width=32 height=32 alt="Admin settings"></a>
-</li>
-  	</div>
-</nav>
-    <img src="static/611.png" class="rounded mx-auto d-block" alt="Gamma Search Engine">
+{% extends "base.html" %}
+{% block content %}
+    <img src="{{ url_for('.static', filename='img/611.png') }}" class="rounded mx-auto d-block" alt="Gamma Search Engine">
 
     <h4 align="center" class="display-4">Gamma Search</h4>
     <br><br><br>
     <form action="/admin_functional/s_kill">
-    <div class="mx-auto col col-lg-5">
-       <div class="input-group mb-3">
-           <input class="btn btn-outline-danger" type="submit" value="Kill Server">
-       </div>
-    </div>
+        <div class="mx-auto col col-lg-5">
+            <div class="input-group mb-3">
+                <input class="btn btn-outline-danger" type="submit" value="Kill Server">
+            </div>
+        </div>
     </form>
-</div>
-</body>
-</html>
+{% endblock %}

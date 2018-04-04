@@ -5,69 +5,50 @@ from bs4 import BeautifulSoup
 import socket
 from threading import Thread, Lock
 import time
-from collections import defaultdict
 import json
 import re
-from boilerpipe import boiler
+from html2txt import handle
 
 
 class Crawler(Thread):
-    init_url = 'https://mail.ru/'
-    anchor = "*"
-    anchor_end = ".mail.ru"
-    restricted_hosts = ["m.mail.ru"]
-
     save_freq = 100
 
-    output_dir = '/Alpha_1/html/'
     debug = True
 
     delay = 0.05
     max_depth = 32
     timeout = 2.0
     max_attempts = 10
-    max_pages = 0
 
     repeat_start_time = 60
     repeat_max_time = 60*60
     delta = 2
-    id = 0
-    index = {}
-    visited = set()
 
-    def __init__(self):
-        self.repeat_attempt = defaultdict(lambda: [self.repeat_start_time / self.delta, 0])
+    def __init__(self, runner, init_url, anchor='*'):
+        super().__init__(target=self.run)
+
+        self.runner = runner
+        self.init_url = init_url
+        self.anchor = anchor
 
         self.bag = [self.init_url]
         self.disallow = set()
 
-        self.working = True
-        super().__init__(target=self.run)
-        # self.get_disallow()
-        self.lock = Lock()
-        self.start()
-        self.go(self.max_depth)
-        self.working = False
-
-        self.max_thread = 8
-
     def run(self):
-        while self.working or len(self.repeat_attempt):
-            for url in self.repeat_attempt.copy():
-                with self.lock:
-                    if self.repeat_attempt[url][0] >= self.repeat_max_time:
-                        del self.repeat_attempt[url]
-                    elif time.time() - self.repeat_attempt[url][1] >= self.repeat_attempt[url][0]:
-                        self.bag.append(url)
-            time.sleep(self.repeat_start_time // 2)
+        self.go(self.max_depth)
+        with self.runner.lock:
+            self.runner.remove(self)
 
     def get_url(self, url, href):
         combined_url = urllib.parse.urljoin(url, href)
         s = urllib.parse.urlparse(combined_url)
-        if s.netloc in self.restricted_hosts:
+        if s.netloc in self.runner.restricted_hosts:
             return
-        if s.netloc == self.anchor or s.netloc.endswith(self.anchor_end) or self.anchor == '*':
+        if s.netloc == self.anchor or s.netloc.endswith(urllib.parse.urlparse(self.init_url).netloc):
             return combined_url
+        if self.anchor == '*':
+            with self.runner.lock:
+                self.runner.add(Crawler(self.runner, combined_url))
 
     def get_disallow(self):
         if not self.get_url(self.init_url, 'robots.txt'):
@@ -97,17 +78,7 @@ class Crawler(Thread):
                     except KeyError:
                         pass
                 break
-            except HTTPError as e:
-                if e.code == '404' or e.code == '500':
-                    self.repeat_attempt[url][0] *= self.delta
-                    self.repeat_attempt[url][1] = time.time()
-                return False, '', list()
-            except socket.timeout as e:
-                self.repeat_attempt[url][0] *= self.delta
-                self.repeat_attempt[url][1] = time.time()
-                print(str(e))
-                return False, '', list()
-            except (URLError, UnicodeEncodeError) as e:
+            except (HTTPError, socket.timeout, URLError, UnicodeEncodeError) as e:
                 print(e)
                 return False, '', list()
         else:
@@ -116,9 +87,9 @@ class Crawler(Thread):
 
     def go(self, current_depth):
         if current_depth <= 0:
-            return self.index
+            return self.runner.index
         for i, url in enumerate(self.bag.copy()):
-            if url in self.visited and len(self.bag) != 1:
+            if url in self.runner.visited and len(self.bag) != 1:
                 continue
             for dis in self.disallow:
                 if len(re.findall(dis, url)):
@@ -129,48 +100,70 @@ class Crawler(Thread):
                 if not status:
                     continue
                 self.bag += children_urls
-                self.index[self.id] = url
-                self.visited.add(url)
-                with open("{0}/{1}".format(self.output_dir, self.id), "wb") as f:
+
+                self.runner.lock.acquire()
+                ids = str(self.runner.id)
+                self.runner.index[self.runner.id] = url
+                self.runner.visited.add(url)
+                self.runner.id += 1
+
+                if not self.runner.id % self.save_freq and self.runner.id:
+                    with open("index.json", "w") as ind:
+                        json.dump(self.runner.index, ind, indent=2)
+                    with open('last_ind.tmp', 'w') as last:
+                        last.write(str(self.runner.id - 1))
+                self.runner.lock.release()
+
+                with open("{0}/{1}".format(self.runner.output_dir, ids), "wb") as f:
                     f.write(html)
 
-                boiler.handle(self.output_dir, str(self.id))
-
                 if self.debug:
-                    print("{0}\t{1}".format(self.id, url))
-                self.id += 1
-                if not self.id % self.save_freq and self.id:
-                    with open("index.json", "w") as ind:
-                        json.dump(self.index, ind, indent=2)
-                    with open('last_ind.tmp', 'w') as last:
-                        last.write(str(self.id - 1))
-                    # generate_index(self.index)
+                    print("{0}\t{1}".format(ids, url))
+
+                handle(self.runner.output_dir, self.runner.txt_dir, ids)
+
                 time.sleep(self.delay)
-                self.max_pages -= 1
-                if self.max_pages <= 0:
-                    return self.index
+                self.runner.max_pages -= 1
+                if self.runner.max_pages <= 0:
+                    exit()
         if len(self.bag) > 0:
             self.go(current_depth - 1)
-        return self.index
+        return self.runner.index
 
 
-class CrawlerRunner(Thread):
+class CrawlerRunner:
+
+    max_crawlers = 8
+
+    restricted_hosts = []
+
+    output_dir = 'html/'
+    txt_dir = 'root/'
+
+    max_pages = 20000
 
     def __init__(self):
-        super().__init__(target=self.run)
-        self.crawler = Crawler
-        try:
-            with open('index.json') as f:
-                index = json.load(f)
-            ids = max(index, key=lambda x: int(x))
-            self.crawler.id = int(ids)
-            self.crawler.init_url = index[ids]
-            self.crawler.index = index
-            self.crawler.visited = set(index.values())
-        except FileNotFoundError:
-            pass
-        self.start()
+        self.visited = set()
+        self.index = {}
+        self.id = 0
+        self.lock = Lock()
 
-    def run(self):
-        print('Запуск паука...')
-        self.crawler()
+        self.query = []
+
+        self.active_crawlers = [Crawler(self, 'https://mail.ru/')]
+
+        for crawler in self.active_crawlers:
+            crawler.start()
+
+    def add(self, crawler):
+        if len(self.active_crawlers) >= self.max_crawlers:
+            self.query.append(crawler)
+        else:
+            self.active_crawlers.append(crawler)
+            crawler.start()
+
+    def remove(self, crawler):
+        self.active_crawlers.remove(crawler)
+        new_crawler = self.query.pop(0)
+        self.active_crawlers.append(new_crawler)
+        new_crawler.start()
