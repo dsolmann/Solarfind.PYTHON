@@ -1,6 +1,5 @@
 from flask import *
 import weather_utils
-import geoip
 import requests
 import json
 
@@ -14,10 +13,6 @@ back_url = 'http://127.0.0.1:8121'
 def write_data(pth, r):
     with open('click_stat.dat', 'a') as f:
         f.write("{0}\t{1}\n".format(r, pth))
-
-
-def capitalize(string, lower_rest=False):
-    return string[:1].upper() + (string[1:].lower() if lower_rest else string[1:])
 
 
 page_rank = {}
@@ -84,7 +79,7 @@ def panesl():
 @app.route('/flask_api/search')
 def get_search():
     try:
-        res = json.loads(requests.get(back_url + "/search?s={0}".format(request.args.get('s'))))
+        res = json.loads(requests.get(back_url + "/search?s={0}".format(request.args.get('s'))).text)
     except requests.exceptions.ConnectionError:
         res = [["Conn error", "", "Sorry! We have connection error!"]]
     return render_template(
@@ -97,6 +92,8 @@ def get_search():
 
 @app.route('/weather')
 def weather():
+    def capitalize(string, lower_rest=False):
+        return string[:1].upper() + (string[1:].lower() if lower_rest else string[1:])
 
     debug_f = request.args.get('debug')
     if debug_f is None:

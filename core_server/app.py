@@ -2,6 +2,11 @@
 
 from indexer import indexing, build_index, dict_optimization, doc2words
 from indexer.search_engine import *
+from flask import *
+import json
+
+
+app = Flask(__name__)
 
 
 def op(fp):
@@ -16,6 +21,11 @@ def generate_index(ind):
     indexing.run('simple9', files)
     build_index.run()
     dict_optimization.run()
+
+
+@app.route('/search')
+def search():
+    return json.dumps(s.search(request.args.get('s')))
 
 
 # ------------------------------------------ #
@@ -47,8 +57,7 @@ class Searcher:
             if len(res) >= 20:
                 break
             snippet = indexing.get_snippet(url, doc2words.normal(req))
-            # TODO: url_for
-            res.append({'url': self.url_list[url], 'head': snippet[0], 'body': snippet[1]})
+            res.append([snippet[0], self.url_list[url], snippet[1]])
         return res
 
 
@@ -60,4 +69,4 @@ if __name__ == '__main__':
     # with open('index.json') as f:
     #     generate_index(json.load(f))
     s = Searcher()
-    print(s.search('новость'))
+    app.run('127.0.0.1', port=8121)
