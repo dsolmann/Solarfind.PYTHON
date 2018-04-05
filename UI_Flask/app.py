@@ -31,12 +31,7 @@ def news():
 @app.route('/gsearch')
 def index_o():
     loc = str(request.accept_languages).split(",")[0]
-    if loc == "ru":
-        with open("ru_exmp.txt", encoding='utf-8') as f:
-            exmp = f.read()
-    else:
-        with open("ru_exmp.txt") as f:
-            exmp = f.read()
+    exmp = requests.get(back_url + "/example").text
     return render_template('index.html', loc=loc, exmp=exmp)
 
 
@@ -85,7 +80,7 @@ def get_search():
     return render_template(
         'search_jinja.html',
         results=res,
-        t_num=len(res),
+        t_num=len(res) if len(res) < 20 else '20+',
         r_name=request.args.get('s')
     )
 
@@ -100,7 +95,7 @@ def weather():
         debug_f = 0
     print(debug_f)
     ips = request.remote_addr
-    m_data = weather_utils.GetAll(ips=ips, city="Puschino")
+    m_data = weather_utils.get_all(ips=ips)
     temp = m_data['temp'][0]
     status = m_data['w_dscr']
     print("Temp:", temp, "Status:", status)
@@ -108,7 +103,7 @@ def weather():
         status = debug_f
     status_img = status.replace(' ', '_') + '.jpg'
     return render_template('weather.html', temp=temp, status=capitalize(status), status_img=status_img,
-                           ndata=['11', '12', '13'])
+                           ndata=weather_utils.get_forecast())
 
 
 if __name__ == "__main__":

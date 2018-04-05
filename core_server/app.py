@@ -4,14 +4,18 @@ from indexer import indexing, build_index, dict_optimization, doc2words
 from indexer.search_engine import *
 from flask import *
 import json
+import random
 
 
 app = Flask(__name__)
 
 
 def op(fp):
-    with open(fp, encoding='utf-8') as fl:
-        return fl.read()
+    try:
+        with open(fp, encoding='utf-8') as fl:
+            return fl.read()
+    except FileNotFoundError:
+        return ''
 
 
 def generate_index(ind):
@@ -26,6 +30,13 @@ def generate_index(ind):
 @app.route('/search')
 def search():
     return json.dumps(s.search(request.args.get('s')))
+
+
+@app.route('/example')
+def get_example():
+    if doc2words.dct.values():
+        return random.choice(list(doc2words.dct.values()))
+    return 'Попробуйте найти что-нибудь...'
 
 
 # ------------------------------------------ #
@@ -56,8 +67,11 @@ class Searcher:
         for url in self._search(doc2words.normal(req).replace(' ', ' & ')):
             if len(res) >= 20:
                 break
-            snippet = indexing.get_snippet(url, doc2words.normal(req))
-            res.append([snippet[0], self.url_list[url], snippet[1]])
+            try:
+                snippet = indexing.get_snippet(url, doc2words.normal(req))
+                res.append([snippet[0], self.url_list[url], snippet[1]])
+            except AttributeError:
+                pass
         return res
 
 

@@ -1,4 +1,4 @@
-def GetAll(ips='127.0.0.1', city='Moscow'):
+def get_all(ips='127.0.0.1'):
     import requests
     try:
         import geoip
@@ -20,4 +20,25 @@ def GetAll(ips='127.0.0.1', city='Moscow'):
     # return result
 
 
-print(GetAll('Moscow'))
+def get_forecast():
+    # 8 данных на день
+    # api.openweathermap.org/data/2.5/forecast?q=Moscow&appid=8145067c7165efd3c8450482714282c7
+    import datetime, requests
+    res = requests.get(
+        "http://api.openweathermap.org/data/2.5/forecast?q=Moscow&appid=8145067c7165efd3c8450482714282c7")
+    res = res.json()
+    lsist = res["list"]
+    asd = []
+    nt = datetime.datetime.utcnow()
+    lastd = None
+    for l in lsist:
+        d = datetime.date.fromtimestamp(l['dt'])
+        d = d.day - nt.day
+        if lastd is not None and lastd != d:
+            asd.append(round(l['main']['temp'] - 273, 1))
+        lastd = d
+        # date=1: завтра и тд
+    return asd[:3]
+
+
+print(get_forecast())

@@ -7,7 +7,7 @@ from threading import Thread, Lock
 import time
 import json
 import re
-from html2txt import handle
+from boilerpipe import boiler
 
 
 class Crawler(Thread):
@@ -120,7 +120,7 @@ class Crawler(Thread):
                 if self.debug:
                     print("{0}\t{1}".format(ids, url))
 
-                handle(self.runner.output_dir, self.runner.txt_dir, ids)
+                boiler.handle(self.runner.output_dir, self.runner.txt_dir, ids)
 
                 time.sleep(self.delay)
                 self.runner.max_pages -= 1
@@ -150,7 +150,7 @@ class CrawlerRunner:
 
         self.query = []
 
-        self.active_crawlers = [Crawler(self, 'https://mail.ru/')]
+        self.active_crawlers = [Crawler(self, 'https://lenta.ru/')]
 
         for crawler in self.active_crawlers:
             crawler.start()
