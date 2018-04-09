@@ -31,8 +31,7 @@ def news():
 @app.route('/gsearch')
 def index_o():
     loc = str(request.accept_languages).split(",")[0]
-    exmp = requests.get(back_url + "/example").text
-    return render_template('index.html', loc=loc, exmp=exmp)
+    return render_template('index.html', loc=loc, exmp=requests.get(back_url + "/example").text)
 
 
 @app.route('/redirect/<string:rname>/<path:pth>')

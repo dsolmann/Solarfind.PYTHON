@@ -5,6 +5,7 @@ from indexer.search_engine import *
 from flask import *
 import json
 import random
+import time
 
 
 app = Flask(__name__)
@@ -76,11 +77,14 @@ class Searcher:
 
 
 if __name__ == '__main__':
-    # from spider.spider import CrawlerRunner
-    # c = CrawlerRunner()
-    # input()
+    from spider.spider import CrawlerRunner
+    c = CrawlerRunner()
 
-    # with open('index.json') as f:
-    #     generate_index(json.load(f))
+    while c.running:
+        time.sleep(5)
+    c.find_duplicates()
+
+    with open('index.json') as f:
+        generate_index(json.load(f))
     s = Searcher()
     app.run('127.0.0.1', port=8121)
