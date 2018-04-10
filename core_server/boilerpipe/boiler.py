@@ -44,7 +44,11 @@ class BoilerWithShingle:
         if code:
             return False
 
-        with open(new_name, 'r', encoding='cp1251') as content_file:  # TODO: encoding='utf-8' !!!!
+        return self.add(index, out)
+
+    def add(self, index, out='root/'):
+        new_name = os.path.join(out, index + '.txt')
+        with open(new_name, 'r', encoding='utf-8') as content_file:
             content = content_file.read()
             if not content.strip():
                 return False
@@ -53,13 +57,19 @@ class BoilerWithShingle:
         return True
 
     def find(self, index):
-        for sgn1, sgn2 in tqdm(combinations(self.doc_signatures, 2), total=c_from_n(len(self.doc_signatures), 2)):
+        i = 0
+        for sgn1, sgn2 in tqdm(combinations(self.doc_signatures[::4], 2),
+                               total=c_from_n(len(self.doc_signatures[::4]), 2)):
+            i += 1
+            if not i % 100000:
+                with open('index.json', 'w') as f:
+                    json.dump(index, f, indent=2)
             if sgn1[0] in self.deleted or sgn2[0] in self.deleted:
                 continue
             if dist(sgn1[1], sgn2[1]) > 0.7:
                 print(sgn1[0], sgn2[0] + ' removed')
                 os.unlink(sgn2[0])
                 self.deleted.append(sgn2[0])
-                index.pop(int(sgn2[2]))
+                index.pop(sgn2[2])
         with open('index.json', 'w') as f:
             json.dump(index, f, indent=2)

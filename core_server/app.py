@@ -22,7 +22,9 @@ def op(fp):
 def generate_index(ind):
     print('Index Gen...')
     indexes = sorted(ind.keys(), key=lambda x: int(x))
-    files = [(int(i), {'url': ind[i], 'text': op('root/' + str(i) + '.txt')}) for i in indexes]
+    files = []
+    for i in indexes:
+        files.append((int(i), {'url': ind[i], 'text': op('root/' + str(i) + '.txt')}))
     indexing.run('simple9', files)
     build_index.run()
     dict_optimization.run()
@@ -48,32 +50,31 @@ class Searcher:
         path = '/Alpha_1/core_server/temp_idx/'
         with open(path + 'encoding.ini', 'r') as f_config:
             encoding = f_config.readline()
-        index = SearchIndex(path + 'entire_index', path + 'terms_dict', encoding)
-        with open(path + 'url_list', 'r') as urls_filename:
-            url_list = urls_filename.readlines()
-            self.url_list = [url[:-1] for url in url_list]
-        self.query_stack = QueryProcessor(index)
+        ind = SearchIndex(path + 'entire_index', path + 'terms_dict', encoding)
+        with open('index.json', 'r') as urls:
+            self.index = json.load(urls)
+        self.query_stack = QueryProcessor(ind)
 
     def _search(self, req):
         query_string = self.query_stack.process(req)
-        results = query_string.get_query_urls(len(self.url_list))
-
-        for doc_url_idx in results:
-            yield doc_url_idx
+        return query_string.get_query_urls(len(self.index))
 
     def search(self, req):
         if req is None:
             return
-        res = []
-        for url in self._search(doc2words.normal(req).replace(' ', ' & ')):
-            if len(res) >= 20:
+        data = []
+        t = time.time()
+        indexes = self._search(doc2words.normal(req).replace(' ', ' & '))
+        t = time.time() - t
+        for ind in indexes:
+            if len(data) >= 20:
                 break
             try:
-                snippet = indexing.get_snippet(url, doc2words.normal(req))
-                res.append([snippet[0], self.url_list[url], snippet[1]])
-            except AttributeError:
+                snippet = indexing.get_snippet(ind, doc2words.normal(req))
+                data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
+            except (AttributeError, IndexError):
                 pass
-        return res
+        return json.dumps({'time': t, 'total': len(indexes), 'data': data})
 
 
 if __name__ == '__main__':
@@ -82,9 +83,19 @@ if __name__ == '__main__':
 
     while c.running:
         time.sleep(5)
-    c.find_duplicates()
 
     with open('index.json') as f:
-        generate_index(json.load(f))
+        index = json.load(f)
+    with open('index_back.json', 'w') as f:
+        json.dump(index, f)
+    c.find_duplicates()
+
+    # from boilerpipe.boiler import BoilerWithShingle
+    # b = BoilerWithShingle()
+    # for ind in index:
+    #     b.add(ind)
+    # b.find(index)
+
+    generate_index(index)
     s = Searcher()
     app.run('127.0.0.1', port=8121)

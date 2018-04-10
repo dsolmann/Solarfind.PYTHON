@@ -1,12 +1,13 @@
 
 import mmh3
 from .binary_encoders import encode_sequence
-from .doc2words import extract_words
+from .doc2words import extract_words, split
 
 import os
 import json
 import struct
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 index_partition_size = 500000
 INDEX_PATH = 'temp_idx'
@@ -43,21 +44,18 @@ def parse_index_header(path):
     return index_object
 
 
-def get_snippet(doc_id, term, edge=100):
-    title = "Untitled"
-    text = ""
-    try:
-        with open(os.path.join(HTML_PATH, '{0}'.format(doc_id)), 'r', encoding='utf-8') as html:
-            soup = BeautifulSoup(html.read(), 'lxml')
-            title = soup.head.title.string
-            text = get_doctext(doc_id)
-            pos = extract_words(text).index(term)
-            begin = pos - edge if pos - edge >= 0 else 0
-            end = pos + edge if pos + edge <= len(text) else len(text)
-            snippet = text[begin:end]
-    except ValueError:
-        snippet = text[:edge * 2]
-    return title, snippet.replace('\n', ' ').replace('\r', '')
+def get_snippet(doc_id, term, edge=20):
+    with open(os.path.join(HTML_PATH, '{0}'.format(doc_id)), 'r', encoding='utf-8') as html:
+        soup = BeautifulSoup(html.read(), 'lxml')
+        title = soup.head.title.string
+        text = get_doctext(doc_id)
+        spl = split(text)
+        pos = extract_words(spl).index(term)
+        begin = pos - edge if pos - edge >= 0 else 0
+        end = pos + edge if pos + edge <= len(spl) else len(spl)
+        lst = spl[begin:end]
+        snippet = ' '.join(lst)
+    return title, snippet, lst[pos - begin]
 
 
 def get_doctext(doc_id):
@@ -73,7 +71,7 @@ def run(encoding_method, files):
     index, url_list = {}, []
     current_partition_id = 0
 
-    for doc_idx, doc in files:
+    for doc_idx, doc in tqdm(files):
         doc_idx = int(doc_idx)
         text = get_doctext(doc_idx)
         url_list.append(doc['url'] + '\n')

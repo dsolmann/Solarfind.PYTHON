@@ -1,21 +1,50 @@
 {% extends "base.html" %}
 {% block title %}Gamma SE - Found {{ t_num }} results{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style>
+        .logo {
+            margin-left: 10px;
+        }
+
+        .form {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
+
+    <div class="input-group">
+        <form action="/flask_api/search" class="form">
+            <img src="{{ url_for('.static', filename='img/gamma.png') }}" class="logo" width="70hv" height="70hv">
+            <input name="s" class="input" placeholder="{{ exmp }}" value="{{ r_name }}" autocomplete="off" aria-label=""
+                   aria-describedby="basic-addon1">
+            <input type="submit" class="btn btn-outline-primary" value="Go">
+        </form>
+    </div>
     <br>
     <br>
     <div class="container">
         <div class="row"></div>
         {% for item in results %}
-        <p class="lead"><a href="{{ item[1] }}">{{item[0]}}</a><br>
-            {{item[2]}}
-        </p>
-        <div class="w-100"></div>
+            <p class="lead"><a href="{{ url_for('redir', url=item[1], r=r_name) }}">{{ item[0] }}</a><br>
+                {% for word in item[2].split() %}
+                    {% if word == item[3] %}
+                        <b>{{ word }}</b>
+                    {% else %}
+                        {{ word }}
+                    {% endif %}
+                {% endfor %}
+            </p>
+            <div class="w-100"></div>
         {% endfor %}
     </div>
     <div class="container">
         <p>
-            <small>Found {{t_num}} results by request «{{r_name}}»</small>
+            <small>Found {{ total }} results by request «{{ r_name }}» for {{ time }} seconds (time without snippet gen)
+            </small>
         </p>
     </div>
 {% endblock %}

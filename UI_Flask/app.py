@@ -23,7 +23,7 @@ def index():
     return render_template('alpha_gate.html')
 
 
-@app.route('/')
+@app.route('/news')
 def news():
     render_template('news.html')
 
@@ -31,13 +31,16 @@ def news():
 @app.route('/gsearch')
 def index_o():
     loc = str(request.accept_languages).split(",")[0]
-    return render_template('index.html', loc=loc, exmp=requests.get(back_url + "/example").text)
+    exmp = requests.get(back_url + "/example").text
+    return render_template('index.html', loc=loc, exmp=exmp)
 
 
-@app.route('/redirect/<string:rname>/<path:pth>')
-def redir(rname, pth):
-    write_data(pth, rname)
-    return redirect(pth, code=302)
+@app.route('/redirect')
+def redir():
+    pth = request.args.get('url')
+    r = request.args.get('r')
+    write_data(pth, r)
+    return redirect(pth)
 
 
 @app.route('/flask_api/login')
@@ -73,14 +76,20 @@ def panesl():
 @app.route('/flask_api/search')
 def get_search():
     try:
-        res = json.loads(requests.get(back_url + "/search?s={0}".format(request.args.get('s'))).text)
+        res = json.loads(requests.get(back_url + "/search?s={0}".format(request.args.get('s'))).json())
+        exmp = requests.get(back_url + "/example").text
     except requests.exceptions.ConnectionError:
-        res = [["Conn error", "", "Sorry! We have connection error!"]]
+        res = {'time': 0.0, 'total': 0, 'data': [["Conn error", "", "Sorry! We have connection error!"]]}
+        exmp = ''
+    # print(res)
     return render_template(
         'search_jinja.html',
-        results=res,
-        t_num=len(res) if len(res) < 20 else '20+',
-        r_name=request.args.get('s')
+        exmp=exmp,
+        results=res['data'],
+        t_num=len(res['data']) if len(res['data']) < 20 else '20+',
+        r_name=request.args.get('s'),
+        total=res['total'],
+        time=res['time']
     )
 
 

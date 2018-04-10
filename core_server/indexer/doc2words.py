@@ -25,6 +25,9 @@ def normal(s):
     return dct[s]
 
 
-def extract_words(text):
-    words = re.findall(SPLIT_RGX, text)
-    return list(map(lambda s: dct[s], words))
+def split(text):
+    return re.findall(SPLIT_RGX, text)
+
+
+def extract_words(words):
+    return [dct[s] for s in words]

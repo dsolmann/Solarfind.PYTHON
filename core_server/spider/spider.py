@@ -49,7 +49,7 @@ class Crawler(Thread):
         self.running = False
 
     def get_url(self, url, href):
-        combined_url = urllib.parse.urljoin(url, href)
+        combined_url = urllib.parse.urljoin(url, href).split('?')[0].split('#')[0]
         s = urllib.parse.urlparse(combined_url)
         if s.netloc in self.runner.restricted_hosts:
             return
@@ -163,7 +163,7 @@ class CrawlerRunner:
     output_dir = 'html/'
     txt_dir = 'root/'
 
-    max_pages = 20000
+    max_pages = 9000
 
     def __init__(self):
         self.visited = set()
@@ -175,7 +175,7 @@ class CrawlerRunner:
         self.pbar = tqdm(total=self.max_pages)
         self.query = []
 
-        self.active_crawlers = [Crawler(self, 'https://lenta.ru/')]
+        self.active_crawlers = [Crawler(self, 'https://habrahabr.ru/')]
 
         for crawler in self.active_crawlers:
             crawler.start()
@@ -190,8 +190,6 @@ class CrawlerRunner:
             crawler.start()
 
     def remove(self, crawler):
-        # Temporarily unavailable
-
         self.active_crawlers.remove(crawler)
         new_crawler = self.query.pop(0)
         self.active_crawlers.append(new_crawler)
