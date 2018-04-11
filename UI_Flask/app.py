@@ -80,12 +80,14 @@ def panesl():
 def get_search():
     try:
         res = json.loads(requests.get(back_url + "/search?s={0}&p={1}".format(request.args.get('s'),
-                                                                              request.args.get('p', default=0))).json())
+                                                                              request.args.get('p', default=1,
+                                                                                               type=int))).json())
         exmp = requests.get(back_url + "/example").text
     except requests.exceptions.ConnectionError:
         res = {'time': 0.0, 'total': 0, 'data': [["Conn error", "", "Sorry! We have connection error!"]]}
         exmp = ''
-    p = int(request.args.get('p', default=1))
+    p = request.args.get('p', default=1, type=int)
+    print(p)
     return render_template(
         'search_jinja.html',
         exmp=exmp,
