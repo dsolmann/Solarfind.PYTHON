@@ -25,7 +25,11 @@ def index():
 
 @app.route('/news')
 def news():
-    render_template('news.html')
+    return render_template('news.html',
+                    name="Lorem ipsum",
+                    text="This text here for example...",
+                    date="11.04.2018"
+                    )
 
 
 @app.route('/gsearch')
