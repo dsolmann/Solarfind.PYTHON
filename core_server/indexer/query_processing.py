@@ -120,14 +120,14 @@ class QueryProcessor:
         compute_stack = []
 
         for token in query:
-            if token == '&' or token == '|':
+            if token == b'&' or token == b'|':
                 result_1 = compute_stack.pop()
                 result_2 = compute_stack.pop()
-                if token == '&':
+                if token == b'&':
                     compute_stack.append(result_1 & result_2)
                 else:
                     compute_stack.append(result_1 | result_2)
-            elif token == '!':
+            elif token == b'!':
                 result_1 = compute_stack.pop()
                 compute_stack.append(result_1.negate())
             else:
@@ -137,24 +137,24 @@ class QueryProcessor:
 
     @staticmethod
     def is_operator(x):
-        if x == '|':
+        if x == b'|':
             return True
-        elif x == '&':
+        elif x == b'&':
             return True
-        elif x == '!':
+        elif x == b'!':
             return True
-        elif x == '(' or x == ')':
+        elif x == b'(' or x == b')':
             return True
         else:
             return False
 
     @staticmethod
     def get_priority(op):
-        if op == '|':
+        if op == b'|':
             return 1
-        elif op == '&':
+        elif op == b'&':
             return 2
-        elif op == '!':
+        elif op == b'!':
             return 3
         else:
             return 0
@@ -183,17 +183,17 @@ class QueryProcessor:
             next_token = self.query_tokens.pop(0)
             if not self.is_operator(next_token):
                 output_string += [next_token]
-            elif next_token == '(':
+            elif next_token == b'(':
                 stack += [next_token]
-            elif next_token == ')':
-                while stack[-1] != '(':
+            elif next_token == b')':
+                while stack[-1] != b'(':
                     output_string += [stack.pop(-1)]
                 stack.pop(-1)
             else:
                 current_priority = self.get_priority(next_token)
                 while len(stack) > 0:
                     stack_priority = self.get_priority(stack[-1])
-                    if next_token == '!':
+                    if next_token == b'!':
                         if current_priority >= stack_priority:
                             break
                     else:

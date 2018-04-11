@@ -11,11 +11,15 @@ class NormalDict(dict):
         self.morph = pymorphy2.MorphAnalyzer()
 
     def __getitem__(self, item):
+        words = item.split()
+        if len(words) > 1:
+            return ' '.join([self.__getitem__(word) for word in words])
         try:
             return super().__getitem__(item)
         except KeyError:
-            self[item] = self.morph.normal_forms(item)[0]
-            return self.morph.normal_forms(item)[0]
+            norm = self.morph.normal_forms(item)[0]
+            self[item] = norm
+            return norm
 
 
 dct = NormalDict()

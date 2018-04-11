@@ -8,6 +8,7 @@ import json
 import struct
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+import random
 
 index_partition_size = 500000
 INDEX_PATH = 'temp_idx'
@@ -46,6 +47,9 @@ def parse_index_header(path):
 
 def get_snippet(doc_id, term, edge=20):
     with open(os.path.join(HTML_PATH, '{0}'.format(doc_id)), 'r', encoding='utf-8') as html:
+        terms = term.split()
+        if len(terms) > 1:
+            term = random.choice(terms)
         soup = BeautifulSoup(html.read(), 'lxml')
         title = soup.head.title.string
         text = get_doctext(doc_id)

@@ -47,7 +47,7 @@ def get_example():
 
 class Searcher:
     def __init__(self):
-        path = '/Alpha_1/core_server/temp_idx/'
+        path = 'temp_idx/'
         with open(path + 'encoding.ini', 'r') as f_config:
             encoding = f_config.readline()
         ind = SearchIndex(path + 'entire_index', path + 'terms_dict', encoding)
@@ -63,14 +63,15 @@ class Searcher:
         if req is None:
             return
         data = []
+        req = doc2words.normal(req)
         t = time.time()
-        indexes = self._search(doc2words.normal(req).replace(' ', ' & '))
+        indexes = self._search(req.replace(' ', ' & '))
         t = time.time() - t
         for ind in indexes:
             if len(data) >= 20:
                 break
             try:
-                snippet = indexing.get_snippet(ind, doc2words.normal(req))
+                snippet = indexing.get_snippet(ind, req)
                 data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
             except (AttributeError, IndexError):
                 pass
@@ -78,17 +79,17 @@ class Searcher:
 
 
 if __name__ == '__main__':
-    from spider.spider import CrawlerRunner
-    c = CrawlerRunner()
+    # from spider.spider import CrawlerRunner
+    # c = CrawlerRunner()
 
-    while c.running:
-        time.sleep(5)
+    # while c.running:
+    #     time.sleep(5)
 
-    with open('index.json') as f:
-        index = json.load(f)
-    with open('index_back.json', 'w') as f:
-        json.dump(index, f)
-    c.find_duplicates()
+    # with open('index.json') as f:
+    #     index = json.load(f)
+    # with open('index_back.json', 'w') as f:
+    #     json.dump(index, f)
+    # c.find_duplicates()
 
     # from boilerpipe.boiler import BoilerWithShingle
     # b = BoilerWithShingle()
@@ -96,6 +97,6 @@ if __name__ == '__main__':
     #     b.add(ind)
     # b.find(index)
 
-    generate_index(index)
+    # generate_index(index)
     s = Searcher()
     app.run('127.0.0.1', port=8121)
