@@ -52,7 +52,7 @@
         <nav aria-label="...">
 
             <ul class="pagination">
-                {% if active_page != 1 %}
+                {% if active_page > 1 %}
                 <li class="page-item">
                     <a class="page-link" href="{{ url_for('get_search', s=r_name, p=active_page - 1) }}">Previous</a>
                 </li>
@@ -62,7 +62,7 @@
                                                                                           href="{{ url_for('get_search', s=r_name, p=i) }}">{{ i }}</a>
                     </li>
                 {% endfor %}
-                {% if active_page != pages %}
+                {% if active_page < pages %}
                     <li class="page-item">
                         <a class="page-link" href="{{ url_for('get_search', s=r_name, p=active_page + 1) }}">Next</a>
                     </li>

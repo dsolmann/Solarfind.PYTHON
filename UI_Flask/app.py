@@ -120,5 +120,10 @@ def weather():
                            ndata=weather_utils.get_forecast())
 
 
+@app.errorhandler(404)
+def not_found_error(_):
+    return render_template('404.html'), 404
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
