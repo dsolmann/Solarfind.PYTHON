@@ -87,7 +87,6 @@ def get_search():
         res = {'time': 0.0, 'total': 0, 'data': [["Conn error", "", "Sorry! We have connection error!"]]}
         exmp = ''
     p = request.args.get('p', default=1, type=int)
-    print(p)
     return render_template(
         'search_jinja.html',
         exmp=exmp,

@@ -66,7 +66,7 @@ class Searcher:
         t = time.time()
         indexes = self._search(req.replace(' ', ' & '))
         t = time.time() - t
-        for ind in indexes[p:p + 20]:
+        for ind in indexes[p*20:(p+1)*20]:
             try:
                 snippet = indexing.get_snippet(ind, req)
                 data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
