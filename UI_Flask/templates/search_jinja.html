@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Gamma SE - Found {{ t_num }} results{% endblock %}
+{% block title %}Gamma SE - Found {{ total }} results{% endblock %}
 {% block head %}
     {{ super() }}
     <style>
@@ -17,7 +17,7 @@
 {% block content %}
 
     <div class="input-group">
-        <form action="/flask_api/search" class="form">
+        <form action="{{ url_for('get_search') }}" class="form">
             <img src="{{ url_for('.static', filename='img/gamma.png') }}" class="logo" width="70hv" height="70hv">
             <input name="s" class="input" placeholder="{{ exmp }}" value="{{ r_name }}" autocomplete="off" aria-label=""
                    aria-describedby="basic-addon1">
@@ -49,23 +49,25 @@
         </p>
     </div>
     <div class="mx-auto col col-lg-5">
-    <nav aria-label="...">
+        <nav aria-label="...">
 
-    <ul class="pagination">
-             <li class="page-item disabled">
-             <span class="page-link">Previous</span>
-      </li>
-      {% for i in pages %}
-          {% if i == apage %}
-             <li class="page-item active"><a class="page-link" href="{{ url_for('get_search', s=r_name, p=i) }}">{{i}}</a></li>
-          {% else %}
-             <li class="page-item"><a class="page-link" href="{{ url_for('get_search', s=r_name, p=i) }}">{{i}}</a></li>
-          {%  endif %}
-      {% endfor %}
-             <li class="page-item">
-             <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
-    </nav>
+            <ul class="pagination">
+                {% if active_page != 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('get_search', s=r_name, p=active_page - 1) }}">Previous</a>
+                </li>
+                {%  endif %}
+                {% for i in range(1, pages + 1) %}
+                    <li class="page-item {% if i == active_page %} active {% endif %}"><a class="page-link"
+                                                                                          href="{{ url_for('get_search', s=r_name, p=i) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                {% if active_page != pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('get_search', s=r_name, p=active_page + 1) }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
 {% endblock %}

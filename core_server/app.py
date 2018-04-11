@@ -31,10 +31,7 @@ def generate_index(ind):
 
 @app.route('/search')
 def search():
-    page = request.args.get('p')
-    if page is None:
-        page = 0
-    return json.dumps(s.search(request.args.get('s'), page))
+    return json.dumps(s.search(request.args.get('s'), int(request.args.get('p', default=1)) - 1))
 
 
 @app.route('/example')
@@ -70,8 +67,11 @@ class Searcher:
         indexes = self._search(req.replace(' ', ' & '))
         t = time.time() - t
         for ind in indexes[p:p + 20]:
-            snippet = indexing.get_snippet(ind, req)
-            data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
+            try:
+                snippet = indexing.get_snippet(ind, req)
+                data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
+            except AttributeError:
+                pass
         return json.dumps({'time': t, 'total': len(indexes), 'data': data})
 
 
