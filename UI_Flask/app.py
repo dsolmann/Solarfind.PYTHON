@@ -31,7 +31,10 @@ def news():
 @app.route('/gsearch')
 def index_o():
     loc = str(request.accept_languages).split(",")[0]
-    exmp = requests.get(back_url + "/example").text
+    try:
+       exmp = requests.get(back_url + "/example").text
+    except requests.exceptions.ConnectionError:
+       exmp = "Backend server don't working"
     return render_template('index.html', loc=loc, exmp=exmp)
 
 
@@ -73,19 +76,23 @@ def panesl():
     abort(403)
 
 
-@app.route('/flask_api/search')
+@app.route('/jsearch')
 def get_search():
     try:
-        res = json.loads(requests.get(back_url + "/search?s={0}".format(request.args.get('s'))).json())
+        res = json.loads(requests.get(back_url + "/search?s={0}&p={1}".format(request.args.get('s'), request.args.get('p', default=0))).json())
         exmp = requests.get(back_url + "/example").text
     except requests.exceptions.ConnectionError:
         res = {'time': 0.0, 'total': 0, 'data': [["Conn error", "", "Sorry! We have connection error!"]]}
         exmp = ''
     # print(res)
+    p = request.args.get('p', default=0)
+    print(p)
     return render_template(
         'search_jinja.html',
         exmp=exmp,
+        apage=p,
         results=res['data'],
+        pages=[0,1,2,3,4,5],
         t_num=len(res['data']) if len(res['data']) < 20 else '20+',
         r_name=request.args.get('s'),
         total=res['total'],
