@@ -42,9 +42,30 @@
         {% endfor %}
     </div>
     <div class="container">
+
         <p>
             <small>Found {{ total }} results by request «{{ r_name }}» for {{ time }} seconds (time without snippet gen)
             </small>
         </p>
+    </div>
+    <div class="mx-auto col col-lg-5">
+    <nav aria-label="...">
+
+    <ul class="pagination">
+             <li class="page-item disabled">
+             <span class="page-link">Previous</span>
+      </li>
+      {% for i in pages %}
+          {% if i == apage %}
+             <li class="page-item active"><a class="page-link" href="{{ url_for('get_search', s=r_name, p=i) }}">{{i}}</a></li>
+          {% else %}
+             <li class="page-item"><a class="page-link" href="{{ url_for('get_search', s=r_name, p=i) }}">{{i}}</a></li>
+          {%  endif %}
+      {% endfor %}
+             <li class="page-item">
+             <a class="page-link" href="#">Next</a>
+    </li>
+  </ul>
+    </nav>
     </div>
 {% endblock %}
