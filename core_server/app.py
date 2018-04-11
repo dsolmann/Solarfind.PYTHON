@@ -7,7 +7,6 @@ import json
 import random
 import time
 
-
 app = Flask(__name__)
 
 
@@ -32,7 +31,10 @@ def generate_index(ind):
 
 @app.route('/search')
 def search():
-    return json.dumps(s.search(request.args.get('s')))
+    page = request.args.get('p')
+    if page is None:
+        page = 0
+    return json.dumps(s.search(request.args.get('s'), page))
 
 
 @app.route('/example')
@@ -59,7 +61,7 @@ class Searcher:
         query_string = self.query_stack.process(req)
         return query_string.get_query_urls(len(self.index))
 
-    def search(self, req):
+    def search(self, req, p=0):
         if req is None:
             return
         data = []
@@ -67,14 +69,9 @@ class Searcher:
         t = time.time()
         indexes = self._search(req.replace(' ', ' & '))
         t = time.time() - t
-        for ind in indexes:
-            if len(data) >= 20:
-                break
-            try:
-                snippet = indexing.get_snippet(ind, req)
-                data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
-            except (AttributeError, IndexError):
-                pass
+        for ind in indexes[p:p + 20]:
+            snippet = indexing.get_snippet(ind, req)
+            data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
         return json.dumps({'time': t, 'total': len(indexes), 'data': data})
 
 
