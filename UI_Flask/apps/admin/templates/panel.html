@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <img src="{{ url_for('.static', filename='img/611.png') }}" class="rounded mx-auto d-block" alt="Gamma Search Engine">
+    <img src="{{ url_for('main.static', filename='img/611.png') }}" class="rounded mx-auto d-block" alt="Gamma Search Engine">
 
     <h4 align="center" class="display-4">Gamma Search</h4>
     <br><br><br>
-    <form action="/admin_functional/s_kill">
+    <form action="{{ url_for('.action', a='kill') }}">
         <div class="mx-auto col col-lg-5">
             <div class="input-group mb-3">
                 <input class="btn btn-outline-danger" type="submit" value="Kill Server">

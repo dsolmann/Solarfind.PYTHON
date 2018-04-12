@@ -4,7 +4,7 @@
 <img src="{{ url_for('.static', filename='img/gamma.png') }}" class="rounded mx-auto d-block" alt="Gamma Search Engine">
 <h4 align="center" class="display-4">Gamma Search</h4>
 <br><br><br>
-<form action="/jsearch">
+<form action="{{ url_for('.get_search') }}">
     <div class="mx-auto col col-lg-5">
         <div class="input-group mb-3">
 

@@ -17,7 +17,7 @@
 {% block content %}
 
     <div class="input-group">
-        <form action="{{ url_for('get_search') }}" class="form">
+        <form action="{{ url_for('.get_search') }}" class="form">
             <img src="{{ url_for('.static', filename='img/gamma.png') }}" class="logo" width="70hv" height="70hv">
             <input name="s" class="input" placeholder="{{ exmp }}" value="{{ r_name }}" autocomplete="off" aria-label=""
                    aria-describedby="basic-addon1">
@@ -29,7 +29,7 @@
     <div class="container">
         <div class="row"></div>
         {% for item in results %}
-            <p class="lead"><a href="{{ url_for('redir', url=item[1], r=r_name) }}">{{ item[0] }}</a><br>
+            <p class="lead"><a href="{{ url_for('.redir', url=item[1], r=r_name) }}">{{ item[0] }}</a><br>
                 {% for word in item[2].split() %}
                     {% if word == item[3] %}
                         <b>{{ word }}</b>
@@ -54,17 +54,17 @@
             <ul class="pagination">
                 {% if active_page > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('get_search', s=r_name, p=active_page - 1) }}">Previous</a>
+                    <a class="page-link" href="{{ url_for('.get_search', s=r_name, p=active_page - 1) }}">Previous</a>
                 </li>
                 {%  endif %}
                 {% for i in range(1, pages + 1) %}
                     <li class="page-item {% if i == active_page %} active {% endif %}"><a class="page-link"
-                                                                                          href="{{ url_for('get_search', s=r_name, p=i) }}">{{ i }}</a>
+                                                                                          href="{{ url_for('.get_search', s=r_name, p=i) }}">{{ i }}</a>
                     </li>
                 {% endfor %}
                 {% if active_page < pages %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('get_search', s=r_name, p=active_page + 1) }}">Next</a>
+                        <a class="page-link" href="{{ url_for('.get_search', s=r_name, p=active_page + 1) }}">Next</a>
                     </li>
                 {% endif %}
             </ul>
