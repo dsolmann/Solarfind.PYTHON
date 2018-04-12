@@ -5,6 +5,7 @@ from tqdm import tqdm
 from itertools import combinations
 from math import factorial
 import json
+from indexer.doc2words import extract_words, split
 
 
 def parse_text(contents_string):
@@ -41,6 +42,12 @@ class BoilerWithShingle:
         new_name = os.path.join(out, index + '.txt')
         code = os.system("java -jar boilerpipe/boilerpipe.jar {0} > {1}".format(os.path.join(inp, index),
                                                                                 new_name))
+
+        with open(new_name, 'r', encoding='utf-8') as inp:
+            text = inp.read()
+            normal_text = extract_words(split(text))
+            with open(os.path.join('normal_text/', '{0}.txt'.format(index)), 'w', encoding='utf-8') as f:
+                f.write(' '.join(normal_text))
         if code:
             return False
 

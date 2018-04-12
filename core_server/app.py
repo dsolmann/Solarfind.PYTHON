@@ -67,12 +67,14 @@ class Searcher:
         t = time.time()
         indexes = self._search(req.replace(' ', ' & '))
         t = time.time() - t
+        a = time.time()
         for ind in indexes[p*20:(p+1)*20]:
             try:
                 snippet = indexing.get_snippet(ind, req)
                 data.append([snippet[0], self.index[str(ind)], snippet[1], snippet[2]])
             except AttributeError:
                 pass
+        print(time.time() - a)
         return json.dumps({'time': t, 'total': len(indexes), 'data': data})
 
 

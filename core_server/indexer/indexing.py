@@ -54,7 +54,8 @@ def get_snippet(doc_id, term, edge=20):
         title = soup.head.title.string
         text = get_doctext(doc_id)
         spl = split(text)
-        pos = extract_words(spl).index(term)
+        with open(os.path.join('normal_text/', '{0}.txt'.format(doc_id)), encoding='utf-8') as f:
+            pos = split(f.read()).index(term)
         begin = pos - edge if pos - edge >= 0 else 0
         end = pos + edge if pos + edge <= len(spl) else len(spl)
         lst = spl[begin:end]
