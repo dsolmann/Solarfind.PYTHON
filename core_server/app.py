@@ -59,8 +59,8 @@ class Searcher:
         return query_string.get_query_urls(len(self.index))
 
     def search(self, req, p=0):
-        if req is None:
-            return
+        if not req:
+            return json.dumps({'time': 0.0, 'total': 0, 'data': []})
         data = []
         req = doc2words.normal(req)
         t = time.time()
