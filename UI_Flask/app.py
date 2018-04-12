@@ -25,7 +25,11 @@ def index():
 
 @app.route('/news')
 def news():
-    render_template('news.html')
+    return render_template('news.html',
+                    name="Lorem ipsum",
+                    text="This text here for example...",
+                    date="11.04.2018"
+                    )
 
 
 @app.route('/gsearch')
@@ -109,7 +113,7 @@ def weather():
         debug_f = 0
     print(debug_f)
     ips = request.remote_addr
-    m_data = weather_utils.get_all(ips=ips)
+    m_data = weather_utils.GetAll(ips=ips)
     temp = m_data['temp'][0]
     status = m_data['w_dscr']
     print("Temp:", temp, "Status:", status)
@@ -117,7 +121,7 @@ def weather():
         status = debug_f
     status_img = status.replace(' ', '_') + '.jpg'
     return render_template('weather.html', temp=temp, status=capitalize(status), status_img=status_img,
-                           ndata=weather_utils.get_forecast())
+                           ndata=weather_utils.GetForecast())
 
 
 @app.errorhandler(404)
