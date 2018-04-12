@@ -48,19 +48,19 @@ class Query:
 
     @staticmethod
     def __unite_lists(a, b):
-        if len(a) == 0:
+        if not a:
             return b
-        elif len(b) == 0:
+        if not b:
             return a
         res = []
         i, j = 0, 0
         while i < len(a) and j < len(b):
             if a[i] <= b[j]:
-                if len(res) == 0 or a[i] != res[-1]:
+                if not res or a[i] != res[-1]:
                     res.append(a[i])
                 i += 1
             else:
-                if len(res) == 0 or b[j] != res[-1]:
+                if not res or b[j] != res[-1]:
                     res.append(b[j])
                 j += 1
         if i < len(a):
@@ -139,25 +139,23 @@ class QueryProcessor:
     def is_operator(x):
         if x == b'|':
             return True
-        elif x == b'&':
+        if x == b'&':
             return True
-        elif x == b'!':
+        if x == b'!':
             return True
-        elif x == b'(' or x == b')':
+        if x == b'(' or x == b')':
             return True
-        else:
-            return False
+        return False
 
     @staticmethod
     def get_priority(op):
         if op == b'|':
             return 1
-        elif op == b'&':
+        if op == b'&':
             return 2
-        elif op == b'!':
+        if op == b'!':
             return 3
-        else:
-            return 0
+        return 0
 
     @staticmethod
     def encode_utf8(text):
@@ -179,7 +177,7 @@ class QueryProcessor:
     def convert_to_polish_notation(self):
         output_string = []
         stack = []
-        while len(self.query_tokens) > 0:
+        while self.query_tokens:
             next_token = self.query_tokens.pop(0)
             if not self.is_operator(next_token):
                 output_string += [next_token]
@@ -191,7 +189,7 @@ class QueryProcessor:
                 stack.pop(-1)
             else:
                 current_priority = self.get_priority(next_token)
-                while len(stack) > 0:
+                while stack:
                     stack_priority = self.get_priority(stack[-1])
                     if next_token == b'!':
                         if current_priority >= stack_priority:
@@ -202,7 +200,7 @@ class QueryProcessor:
                     output_string += [stack.pop(-1)]
                 stack += [next_token]
 
-        while len(stack) > 0:
+        while stack:
             output_string += [stack.pop(-1)]
 
         return output_string

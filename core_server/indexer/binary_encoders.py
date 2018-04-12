@@ -18,18 +18,17 @@ class Simple9Encoder:
         bits_per_number = self.__bitcounts_of_numbers[packing_type_idx]
         rest_bits = 28 % bits_per_number
         package = packing_type_idx << rest_bits
-        if type(nums_of_package) is list:
+        if isinstance(nums_of_package, list):
             for current_number in nums_of_package:
                 package = (package << bits_per_number) | current_number
             return package
-        else:
-            return (package << bits_per_number) | nums_of_package
+        return (package << bits_per_number) | nums_of_package
 
     def encode(self, num_sequence):
         if not hasattr(num_sequence, '__len__'):
             num_sequence = [num_sequence]
 
-        numbers_len = list(map(lambda x: self.__get_bitcount_for_number(x), num_sequence))
+        numbers_len = [self.__get_bitcount_for_number(x) for x in num_sequence]
         n_nums_encoded, simple9_packs = 0, []
         while n_nums_encoded < len(num_sequence):
             for packing_type_idx in reversed(range(8)):
@@ -53,7 +52,7 @@ class Simple9Encoder:
         packing_type_idx = package >> 28
         mask = 2 ** self.__bitcounts_of_numbers[packing_type_idx] - 1
         result_sequence = []
-        for i in range(self.__numbers_in_package[packing_type_idx]):
+        for _ in range(self.__numbers_in_package[packing_type_idx]):
             result_sequence += [package & mask]
             package >>= self.__bitcounts_of_numbers[packing_type_idx]
         return list(reversed(result_sequence))
