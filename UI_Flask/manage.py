@@ -1,5 +1,5 @@
 from flask import *
-
+from raven.contrib.flask import Sentry
 from config import Configuration
 
 from apps.main.views import main
@@ -18,7 +18,8 @@ app.register_blueprint(admin, url_prefix='/admin')
 app.config.from_object(Configuration)
 
 
+sentry = Sentry(app, dsn='https://082b8cf14f494e2f9ea84e2b7614347f:89d3be577d8c416b9324294869126180@sentry.io/1188746')
+
+
 if __name__ == "__main__":
-    from raven.contrib.flask import Sentry
-    sentry = Sentry(app, dsn='https://082b8cf14f494e2f9ea84e2b7614347f:89d3be577d8c416b9324294869126180@sentry.io/1188746')
     app.run(host="0.0.0.0")
