@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from indexer import indexing, build_index, dict_optimization, doc2words
-from indexer.search_engine import *
-from flask import *
+from indexer.search_engine import SearchIndex, QueryProcessor
+from flask import Flask, request
 import json
 import random
 import time
