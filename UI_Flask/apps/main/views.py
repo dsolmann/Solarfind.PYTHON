@@ -1,10 +1,12 @@
 from flask import *
+from flask.ext.babel import Babel, gettext
 import requests
 from config import *
 
 
 main = Blueprint('main', __name__, template_folder='templates', static_folder='static')
-
+main.config.from_pyfile('babel.cfg')
+babel = Babel(main)
 
 def write_data(pth, r):
     with open('click_stat.dat', 'a') as f:
