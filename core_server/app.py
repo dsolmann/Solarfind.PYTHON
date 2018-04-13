@@ -98,5 +98,7 @@ if __name__ == '__main__':
     # b.find(index)
 
     # generate_index(index)
+    from raven.contrib.flask import Sentry
+    sentry = Sentry(app, dsn='https://082b8cf14f494e2f9ea84e2b7614347f:89d3be577d8c416b9324294869126180@sentry.io/1188746')
     s = Searcher()
     app.run('127.0.0.1', port=8121)
