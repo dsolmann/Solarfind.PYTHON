@@ -12,14 +12,14 @@ from tqdm import tqdm
 
 
 class Crawler(Thread):
-    save_freq = 5
+    save_freq = 15
 
     debug = True
 
     delay = 0.05
     max_depth = 32
-    timeout = 2.0
-    max_attempts = 10
+    timeout = 1.0
+    max_attempts = 5
 
     repeat_start_time = 60
     repeat_max_time = 60*60
@@ -156,14 +156,14 @@ class Crawler(Thread):
 
 class CrawlerRunner:
 
-    max_crawlers = 8
+    max_crawlers = 16
 
-    restricted_hosts = []
+    restricted_hosts = ['youtube.com', '*.youtube.com']
 
     output_dir = 'html/'
     txt_dir = 'root/'
 
-    max_pages = 9000
+    max_pages = 30000
 
     def __init__(self):
         self.visited = set()
@@ -175,7 +175,7 @@ class CrawlerRunner:
         self.pbar = tqdm(total=self.max_pages)
         self.query = []
 
-        self.active_crawlers = [Crawler(self, 'https://habrahabr.ru/')]
+        self.active_crawlers = [Crawler(self, 'https://lenta.ru/')]
 
         for crawler in self.active_crawlers:
             crawler.start()

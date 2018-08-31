@@ -167,7 +167,7 @@ class QueryProcessor:
     def get_stream(self, query):
         query = re.sub(r'\s+', '', query)
         query = re.findall(r"[^&|!()]+|\S", query)
-        query = map(self.encode_utf8(x), query)
+        query = map(self.encode_utf8, query)
         query = map(lambda x: x.lower(), query)
 
         self.query_tokens = list(query)

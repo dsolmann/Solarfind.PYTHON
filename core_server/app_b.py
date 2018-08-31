@@ -79,26 +79,27 @@ class Searcher:
 
 
 if __name__ == '__main__':
-    # from spider.spider import CrawlerRunner
-    # c = CrawlerRunner()
+    from spider.spider import CrawlerRunner
+    c = CrawlerRunner()
 
-    # while c.running:
-    #     time.sleep(5)
+    while c.running:
+        time.sleep(1)
 
-    # with open('index.json') as f:
-    #     index = json.load(f)
-    # with open('index_back.json', 'w') as f:
-    #     json.dump(index, f)
-    # c.find_duplicates()
+    with open('index.json') as f:
+        index = json.load(f)
+    with open('index_back.json', 'w') as f:
+        json.dump(index, f)
+    c.find_duplicates()
 
-    # from boilerpipe.boiler import BoilerWithShingle
-    # b = BoilerWithShingle()
-    # for ind in index:
-    #     b.add(ind)
-    # b.find(index)
+    from boilerpipe.boiler import BoilerWithShingle
+    b = BoilerWithShingle()
+    for ind in index:
+        b.add(ind)
+    b.find(index)
 
-    # generate_index(index)
+    generate_index(index)
     from raven.contrib.flask import Sentry
     sentry = Sentry(app, dsn='https://082b8cf14f494e2f9ea84e2b7614347f:89d3be577d8c416b9324294869126180@sentry.io/1188746')
     s = Searcher()
-    app.run('127.0.0.1', port=8121)
+#    app.run('127.0.0.1', port=8122)
+
