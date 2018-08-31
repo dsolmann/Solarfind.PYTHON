@@ -1,4 +1,4 @@
-
+import logbook
 
 class Configuration(object):
     SECRET_KEY = 'so_secret!'

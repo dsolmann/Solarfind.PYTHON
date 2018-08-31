@@ -1,13 +1,34 @@
-from flask import *
 
+from flask import *
 
 admin = Blueprint('admin', __name__, template_folder='templates', static_folder='static')
 
 a = ('admin', '1234')
 
+def user_log(ip, browser, req, loc=None, uuid=None, lfolder="Logs"):
+    import  json
+    print("USER ",uuid, ip, loc, browser, "with request", req)
+    g = {}
+    g['uuid']=uuid
+    g['ip']=ip
+    g['loc']=loc
+    g['browser']=browser
+    if req.split("/", maxsplit=1)[0]=="search":
+        g['application']='search'
+        g['request']=req.split("/", maxsplit=1)[1]
+    else:
+        g['aplication']=req
+    with open(lfolder+"/users.log", 'a') as f:
+      json.dump(g, f)
+      f.write('\n')
+      f.close()
+
 
 @admin.route('/login', methods=['POST', 'GET'])
 def auth():
+    user_log(request.remote_addr, request.headers.get('User-Agent', default=None), req="admin",
+                     loc=(request.cookies.get("lat"), request.cookies.get("long")), uuid=request.cookies.get('uuid',
+                                                                                                            default=0))
     if request.method == 'POST':
         password = request.args.get('password')
         login = request.args.get('email')

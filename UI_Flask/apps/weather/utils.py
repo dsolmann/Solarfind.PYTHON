@@ -3,16 +3,13 @@ import requests
 import datetime
 
 
-def get_all(ips='127.0.0.1'):
-    try:
-        print(ips)
-        a = geoip.open_database('apps/weather/data/geoip_data.mmdb')
-        b = a.lookup(ips)
+def get_all(b):
+    if b[0] != None:
+        print(b)
         result = requests.get('http://api.openweathermap.org/data/2.5/weather?'
-                              'lat={lat}&lon={lon}&appid=8145067c7165efd3c8450482714282c7'.format(lat=b.location[0],
-                                                                                                  lon=b.location[
-                                                                                                      1])).json()
-    except:
+                              'lat={lat}&lon={lon}&appid=8145067c7165efd3c8450482714282c7'.format(lat=b[0],
+                                                                                                  lon=b[1])).json()
+    else:
         r = (54.8276, 37.6714)
         result = requests.get('http://api.openweathermap.org/data/2.5/weather?'
                               'lat={lat}&lon={lon}&appid=8145067c7165efd3c8450482714282c7'.format(lat=r[0],
@@ -23,11 +20,18 @@ def get_all(ips='127.0.0.1'):
     # return result
 
 
-def get_forecast():
+def get_forecast(b=(54,37)):
+    if b is not None:
+        r=b
+    else:
+        print("Hohohohohohoh!!!", b)
+        r=(54,37)
+    print("B:",b)
     # 8 данных на день
     # api.openweathermap.org/data/2.5/forecast?q=Moscow&appid=8145067c7165efd3c8450482714282c7
     res = requests.get(
-        "http://api.openweathermap.org/data/2.5/forecast?q=Moscow&appid=8145067c7165efd3c8450482714282c7")
+        "http://api.openweathermap.org/data/2.5/forecast?"
+        "q=Moscow&appid=8145067c7165efd3c8450482714282c7".format(lat=r[0], lon=r[1]))
     res = res.json()
     lsist = res["list"]
     asd = []

@@ -4,15 +4,18 @@
 <img src="{{ url_for('.static', filename='img/gamma.png') }}" class="rounded mx-auto d-block" alt="Gamma Search Engine">
 <h4 align="center" class="display-4">Gamma Search</h4>
 <br><br><br>
+
 <form action="{{ url_for('.get_search') }}">
     <div class="mx-auto col col-lg-5">
-        <div class="input-group mb-3">
-
-            <input type="text" name="s" class="form-control" placeholder="{{ exmp }}" aria-label="{{ exmp }}"
-                   aria-describedby="basic-addon1">
-            <button type="submit" class="btn btn-outline-primary">Go</button>
-
-        </div>
+    <div class="input-group mb-3">
+    <input type="text" class="form-control" id="search-input" placeholder="{{exmp}}" aria-label="{{exmp}}" aria-describedby="basic-addon2" name="s">
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" type="button" onclick="SaySomething('Слушаю...'); setTimeout(RecognizeRU(), 2000)"><img src="{{ url_for('.static', filename='img/vrec-icon.svg') }}" height="60%" width="60%" alt="Voice Recognition"></button>
+      <button class="btn btn-outline-primary" id="search-button" type="submit">Search</button>
+    </div>
+    </div>
     </div>
 </form>
+
+
 {% endblock %}

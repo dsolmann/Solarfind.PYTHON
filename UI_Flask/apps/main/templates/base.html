@@ -10,6 +10,88 @@
     {% endblock %}
 </head>
 <body>
+<script>
+    function notifyMe() {
+  // Проверка поддержки браузером уведомлений
+  if (!("Notification" in window)) {
+    console.log("This browser does not support desktop notification");
+  }
+
+  // Проверка разрешения на отправку уведомлений
+  else if (Notification.permission === "granted") {
+    // Если разрешено, то создаем уведомление
+    var notification = new Notification("Hi there!");
+  }
+
+  // В противном случае, запрашиваем разрешение
+  else if (Notification.permission !== 'denied') {
+    Notification.requestPermission(function (permission) {
+      // Если пользователь разрешил, то создаем уведомление 
+      if (permission === "granted") {
+        var notification = new Notification("Thanks for subscribe!");
+      }
+    });
+  }
+
+}
+</script>
+
+<script>
+    function SaySomething (smth) {
+        var voices = speechSynthesis.getVoices();
+        var utterance = new SpeechSynthesisUtterance(smth);
+        utterance.voice = voices[1];
+        speechSynthesis.speak(utterance);
+    }
+</script>
+
+<script>
+    console.log("Старту-у-ем! (Игорь Негода, 2018)");
+    var recognizer = new webkitSpeechRecognition();
+function RecognizeRU(){
+    console.log("Кнопку нажимаем! Voice Recognition started.");
+    // Создаем распознаватель
+    // Ставим опцию, чтобы распознавание началось ещё до того, как пользователь закончит говорить
+    recognizer.interimResults = true;
+
+// Какой язык будем распознавать?
+    recognizer.lang = 'ru-Ru';
+
+// Используем колбек для обработки результатов
+    recognizer.onresult = function (event) {
+        var result = event.results[event.resultIndex];
+        if (result.isFinal) {
+            a = result[0].transcript;
+            $("#search-input")[0].value=a;
+            $("#search-button")[0].click();
+        } else {
+            console.log('Промежуточный результат: ', result[0].transcript);
+        }
+    };
+
+// Начинаем слушать микрофон и распознавать голос
+setTimeout(function(){
+console.log("Поехали!")    
+recognizer.start();}, 3000);
+
+}
+</script>
+
+<script>
+        //GeoLocation Service
+        navigator.geolocation.getCurrentPosition(function(position) {
+              lat = position.coords.latitude;
+              long = position.coords.longitude;
+              console.log("Latitude: "+lat);
+              console.log("Longitude: "+long)
+              document.cookie = "lat="+lat;
+              document.cookie = "long="+long;
+
+        });
+
+    </script>
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="/">Alpha Gate</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1" aria-controls="navbar1"
@@ -34,6 +116,9 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="https://github.com/AlphaSearch/Alpha_A">Github page</a>
                 </div>
+            </li>
+            <li>
+                <button class="btn btn-outline-info my-2 my-sm-0" onclick="notifyMe()">Subscribe</button>
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0" action="{{ url_for('main.get_search') }}">
